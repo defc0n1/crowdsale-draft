@@ -18,7 +18,7 @@ contract OdysseyPresaleToken is MintableToken {
 
 	/**
   * @dev Constructor.
-  * Set the initial token supply and balances.
+  * @dev Set the initial token supply and balances.
   */
 	function OdysseyPresaleToken() public {
 		totalSupply = INITIAL_SUPPLY;
