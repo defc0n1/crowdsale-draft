@@ -1,6 +1,14 @@
 # Crowdsale
 
-Code for the Odyssey token sale.
+Code for the Odyssey token sale.<br><br>
+-⚠️- Warning -⚠️-<br>
+This code is NOT ready for production.<br>
+Onessus and its developers claim no responsibility for any financial loss resulting from the use of this code.<br>
+All rights reserved.<br>
+
+## Screenshots
+
+![Dashboard](/screenshots/dashboard.png?raw=true "Dashboard Proof of Concept")
 
 ## Installation
 
@@ -31,4 +39,7 @@ Migrate the contracts<br>
 `migrate --reset`<br>
 
 Exit out of the truffle development console and run<br>
-`npm run dev`
+`npm run dev`<br><br>
+
+All rights reserved. © 2017.<br>
+
