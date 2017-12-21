@@ -1,7 +1,7 @@
 # Crowdsale
 
 Code for the Odyssey token sale.<br><br>
--⚠️- Warning -⚠️-<br>
+⚠️ Warning<br>
 This code is NOT ready for production.<br>
 Onessus and its developers claim no responsibility for any financial loss resulting from the use of this code.<br>
 All rights reserved.<br>
