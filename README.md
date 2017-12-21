@@ -6,6 +6,10 @@ This code is NOT ready for production.<br>
 Onessus and its developers claim no responsibility for any financial loss resulting from the use of this code.<br>
 All rights reserved.<br>
 
+## Screenshots
+
+![Dashboard](/screenshots/dashboard.png?raw=true "Dashboard Proof of Concept")
+
 ## Installation
 
 Clone the repo:<br>
