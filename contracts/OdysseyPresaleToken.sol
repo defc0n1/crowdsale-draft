@@ -9,23 +9,49 @@ contract OdysseyPresaleToken is MintableToken {
 	uint public decimals = 18;
 	uint public INITIAL_SUPPLY = 12000000;
 
+	// Conversion rate. 1 ether * rate = number of tokens.
+	uint256 public rate;
+	// Allow owner to enable/disable token transfers.
+	bool public isTransferEnabled;
+	// Allow owner to enable/disable purchase of tokens.
+	bool public isPurchaseEnabled;
+
 	/**
-  * @dev MintableToken constructor.
-  * Sets the initial token supply and balances.
+  * @dev Constructor.
+  * Set the initial token supply and balances.
   */
 	function OdysseyPresaleToken() public {
 		totalSupply = INITIAL_SUPPLY;
 		balances[msg.sender] = INITIAL_SUPPLY;
+		isTransferEnabled = true;
 	}
 
-	// Conversion rate. 1 ether * rate = number of tokens.
-	uint256 public rate = 3;
 	/**
-  * @dev Gets the current token conversion rate.
-  * @return An uint256 representing the current conversion rate.
-  */
-	function rate() public view returns (uint256) {
-		return rate;
+	* @dev Change the conversion rate at which tokens may be purchased.
+	* @param _rate The conversion rate of wei to tokens.
+	*/
+	function setRate(uint256 _rate) public onlyOwner returns (bool) {
+		rate = _rate;
+		return true;
+	}
+
+	/**
+	* @dev Enable or disable the ability to transfer tokens.
+	* @dev This is useful to prevent premature or unfair access to exchanges.
+	* @dev Note that actually using this bool isn't trivial.
+	* @dev Disabling transfers shouldn't disable purchases.
+	*/
+	function toggleTransfers() public onlyOwner returns (bool) {
+		isTransferEnabled = !isTransferEnabled;
+		return true;
+	}
+
+	/**
+	* @dev Enable or disable the ability to purchase tokens.
+	*/
+	function togglePurchases() public onlyOwner returns (bool) {
+		isPurchaseEnabled = !isPurchaseEnabled;
+		return true;
 	}
 
 	/**
@@ -37,26 +63,33 @@ contract OdysseyPresaleToken is MintableToken {
 		// 1 ether = 10^18 wei. Convert msg.value to ether and multiply by rate.
 		uint256 numberOfTokens = (msg.value / 1000000000000000000) * rate;
 
-		// There are not enough tokens to purchase.
-		// TODO: Think about what happens to the ETH...
-		if(balances[owner] < numberOfTokens){
-			revert();
-		}
+		require(msg.value != 0);
+		require(isPurchaseEnabled);
+		require(balances[owner] < numberOfTokens);
 
 		// TODO: There's a better way to do this.
 		balances[owner] -= numberOfTokens;
 		balances[_to] += numberOfTokens;
-		return true;
 	}
 
 	/**
-	* @dev Change the conversion rate at which tokens may be purchased.
-	* @param _rate The conversion rate of wei to tokens.
- 	*/
-	function setRate(uint256 _rate) public onlyOwner returns (bool) {
-		rate = _rate;
-		return true;
-	}
+  * @dev Transfer tokens to a specified address.
+  * @param _to The address to transfer to.
+  * @param _value The amount to be transferred.
+  */
+  function transfer(address _to, uint256 _value) public returns (bool) {
+    require(_to != address(0));
+    require(_value <= balances[msg.sender]);
+		// Transfers should not be allowed if isTransferEnabled is false,
+		// unless msg.sender is the contract owner.
+		require(isTransferEnabled || msg.sender == owner);
+
+    // SafeMath.sub will throw if there is not enough balance.
+    balances[msg.sender] = balances[msg.sender].sub(_value);
+    balances[_to] = balances[_to].add(_value);
+    Transfer(msg.sender, _to, _value);
+    return true;
+  }
 
 	/**
  	* @dev Destroy the contract and drain any ether to a specified address.

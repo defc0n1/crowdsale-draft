@@ -35,6 +35,8 @@ App = {
       App.getTotalSupply();
       App.getTokenRate();
       App.getIsMintingFinished();
+      App.getIsTransferEnabled();
+
       // Get the user's current ODT balance.
       App.getBalances();
       App.getEthAddress();
@@ -51,6 +53,7 @@ App = {
     $(document).on('click', '#balanceButton', App.handleGetBalance);
     $(document).on('click', '#setRateButton', App.handleSetRate);
     $(document).on('click', '#mintButton', App.handleMint);
+    $(document).on('click', '#toggleTransfersButton', App.handleToggleTransfers);
     $(document).on('click', '#disableMintingButton', App.handleDisableMinting);
     $(document).on('click', '#selfDestructButton', App.handleSelfDestruct);
   },
@@ -217,6 +220,23 @@ App = {
       // Negate the bool. We just care if we can mint new tokens.
       let canMintTokens = (!isMiningFinished).toString().capitalize();
       $('#ODTCanMintTokens').text(canMintTokens);
+    }).catch(function(err) {
+      console.log(err.message);
+    });
+  },
+
+  getIsTransferEnabled: function() {
+
+    var odysseyPresaleToken;
+
+    App.contracts.OdysseyPresaleToken.deployed().then(function(instance) {
+      odysseyPresaleToken = instance;
+      let isTransferEnabled = odysseyPresaleToken.isTransferEnabled();
+      return isTransferEnabled;
+    }).then(function(result) {
+      isTransferEnabled = result;
+      let canTransferTokens = (isTransferEnabled).toString().capitalize();
+      $('#ODTCanTransferTokens').text(canTransferTokens);
     }).catch(function(err) {
       console.log(err.message);
     });
@@ -390,7 +410,37 @@ App = {
 
         return odysseyPresaleToken.finishMinting({from: account});
       }).then(function(result) {
-        alert('Minting Disabled Successfully!');
+        alert('Minting disabled successfully!');
+        // TODO: Refresh token values?
+      }).catch(function(err) {
+        console.log(err.message);
+      });
+    });
+  },
+
+  handleToggleTransfers: function(event) {
+    event.preventDefault();
+
+    var odysseyPresaleToken;
+
+    web3.eth.getAccounts(function(error, accounts) {
+      if (error) {
+        console.log(error);
+      }
+
+      let result = confirm("Are you sure you want to enable/disable token transfers?");
+      if(!result){
+        return;
+      }
+
+      var account = accounts[0];
+
+      App.contracts.OdysseyPresaleToken.deployed().then(function(instance) {
+        odysseyPresaleToken = instance;
+
+        return odysseyPresaleToken.toggleTransfers({from: account});
+      }).then(function(result) {
+        alert('Enabled/disabled token transfers successfully!');
         // TODO: Refresh token values?
       }).catch(function(err) {
         console.log(err.message);
