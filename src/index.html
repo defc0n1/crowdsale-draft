@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Odyssey - Wallet</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/index.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <h1 class="text-center">
+          <img class='main-logo' src='images/Odyssey-blue-logo-sm.png' />
+          Odyssey Crowdsale Dashboard
+        </h1>
+        <hr/>
+        <br/>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Contract Info</h3>
+            </div>
+            <div class="panel-body">
+              <h4>Contract</h4>
+
+              <strong>Token Name</strong>: <span id="ODTTokenName"></span>
+              <br />
+              <strong>Decimals</strong>: <span id="ODTDecimals"></span>&nbsp;ODT
+              <br />
+              <strong>Contract Address</strong>: <span id="ODTContractAddress"></span>
+              <br />
+              <strong>Initial Supply</strong>: <span id="ODTInitialSupply"></span>&nbsp;ODT
+              <br />
+              <strong>Total Supply</strong>: <span id="ODTTotalSupply"></span>&nbsp;ODT
+              <br />
+              <strong>Token Rate</strong>: <span id="ODTTokenRate"></span>&nbsp;ODT/ETH
+              <br />
+              <strong>Owner Can Mint Tokens</strong>: <span id="ODTCanMintTokens"></span>
+              <br />
+              <br />
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Wallet Info</h3>
+            </div>
+            <div class="panel-body">
+              <h4>Wallet & Tokens</h4>
+
+              <strong>Wallet Address</strong>: <span id="ETHAddress"></span>
+              <br />
+              <strong>ETH Balance</strong>: <span id="ETHBalance"></span>&nbsp;ETH
+              <br />
+              <strong>ODT Balance</strong>: <span id="ODTBalance"></span>&nbsp;ODT
+              <br /><br />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">User Actions</h3>
+            </div>
+            <div class="panel-body">
+              <h4>Purchase Odyssey</h4>
+              <p>
+                Purchase Odyssey tokens with Ethereum.
+              </p>
+              <input type="text" class="form-control" id="ODTPurchaseAddress" placeholder="Recipient Address" />
+              <input type="text" class="form-control" id="ETHPurchaseAmount" placeholder="Amount (Ether)" />
+              <input type="text" class="form-control" id="ODTPurchaseAmount" placeholder="Estimated Amount (Odyssey)" />
+              <button class="btn btn-primary" id="purchaseButton" type="button">Purchase</button>
+              <br /><br />
+
+              <h4>Transfer Odyssey</h4>
+              <p>
+                Transfer Odyssey tokens to another address.
+              </p>
+              <input type="text" class="form-control" id="ODTTransferAddress" placeholder="Recipient Address" />
+              <input type="text" class="form-control" id="ODTTransferAmount" placeholder="Amount (Odyssey)" />
+              <button class="btn btn-primary" id="transferButton" type="button">Transfer</button>
+              <br /><br />
+              <h4>Get Odyssey Balance</h4>
+              <p>
+                Get the balance of an arbitrary address.
+              </p>
+              <input type="text" class="form-control" id="ODTBalanceAddress" placeholder="Address" />
+              <button class="btn btn-primary" id="balanceButton" type="button">Get Balance</button>
+              <br /><br />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="col-md-4">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Admin Actions</h3>
+              </div>
+              <div class="panel-body">
+                <h4>Conversion Rate</h4>
+                <p>
+                  Set the conversion rate for ODT purchases.
+                </p>
+                <input type="text" class="form-control" id="ODTConversionRate" placeholder="New Rate (ODT/ETH)" />
+                <button class="btn btn-danger" id="setRateButton" type="button">Change Rate</button>
+                <br /><br />
+
+                <h4>Mint Tokens</h4>
+                <p>
+                  Mint tokens, increasing the total supply.
+                </p>
+                <input type="text" class="form-control" id="ODTMintAddress" placeholder="Recipient Address" />
+                <input type="text" class="form-control" id="ODTMintAmount" placeholder="Amount" />
+                <button class="btn btn-danger" id="mintButton" type="button">Mint Tokens</button>
+                <br /><br />
+
+                <h4>Disable Future Minting</h4>
+                <p>
+                  Prevent the owner from creating new tokens.
+                  Once disabled, this cannot be renabled.
+                </p>
+                <button class="btn btn-danger" id="disableMintingButton" type="button">Disable Minting</button>
+                <br /><br />
+
+                <h4>Self-Destruct</h4>
+                <p>
+                  Destroy the contract and drain ether to a given address.
+                  This is for emergencies only.
+                </p>
+                <input type="text" class="form-control" id="ODTSelfDestructAddress" placeholder="Recipient Address" />
+                <button class="btn btn-danger" id="selfDestructButton" type="button">Self Destruct</button>
+                <br /><br />
+              </div>
+            </div>
+          </div>
+        </div>
+
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/truffle-contract.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
