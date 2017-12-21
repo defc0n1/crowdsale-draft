@@ -24,6 +24,8 @@ contract OdysseyPresaleToken is MintableToken {
 		totalSupply = INITIAL_SUPPLY;
 		balances[msg.sender] = INITIAL_SUPPLY;
 		isTransferEnabled = true;
+		isPurchaseEnabled = true;
+		rate = 3;
 	}
 
 	/**

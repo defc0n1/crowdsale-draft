@@ -36,6 +36,7 @@ App = {
       App.getTokenRate();
       App.getIsMintingFinished();
       App.getIsTransferEnabled();
+      App.getIsPurchaseEnabled();
 
       // Get the user's current ODT balance.
       App.getBalances();
@@ -54,6 +55,7 @@ App = {
     $(document).on('click', '#setRateButton', App.handleSetRate);
     $(document).on('click', '#mintButton', App.handleMint);
     $(document).on('click', '#toggleTransfersButton', App.handleToggleTransfers);
+    $(document).on('click', '#togglePurchasesButton', App.handleTogglePurchases);
     $(document).on('click', '#disableMintingButton', App.handleDisableMinting);
     $(document).on('click', '#selfDestructButton', App.handleSelfDestruct);
   },
@@ -242,6 +244,23 @@ App = {
     });
   },
 
+  getIsPurchaseEnabled: function() {
+
+    var odysseyPresaleToken;
+
+    App.contracts.OdysseyPresaleToken.deployed().then(function(instance) {
+      odysseyPresaleToken = instance;
+      let isPurchaseEnabled = odysseyPresaleToken.isPurchaseEnabled();
+      return isPurchaseEnabled;
+    }).then(function(result) {
+      isPurchaseEnabled = result;
+      let canPurchaseTokens = (isPurchaseEnabled).toString().capitalize();
+      $('#ODTCanPurchaseTokens').text(canPurchaseTokens);
+    }).catch(function(err) {
+      console.log(err.message);
+    });
+  },
+
   handlePurchase: function(event) {
     event.preventDefault();
 
@@ -411,6 +430,36 @@ App = {
         return odysseyPresaleToken.finishMinting({from: account});
       }).then(function(result) {
         alert('Minting disabled successfully!');
+        // TODO: Refresh token values?
+      }).catch(function(err) {
+        console.log(err.message);
+      });
+    });
+  },
+
+  handleTogglePurchases: function(event) {
+    event.preventDefault();
+
+    var odysseyPresaleToken;
+
+    web3.eth.getAccounts(function(error, accounts) {
+      if (error) {
+        console.log(error);
+      }
+
+      let result = confirm("Are you sure you want to enable/disable token purchases?");
+      if(!result){
+        return;
+      }
+
+      var account = accounts[0];
+
+      App.contracts.OdysseyPresaleToken.deployed().then(function(instance) {
+        odysseyPresaleToken = instance;
+
+        return odysseyPresaleToken.togglePurchases({from: account});
+      }).then(function(result) {
+        alert('Enabled/disabled token purchases successfully!');
         // TODO: Refresh token values?
       }).catch(function(err) {
         console.log(err.message);
