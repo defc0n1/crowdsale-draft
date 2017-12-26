@@ -43,6 +43,7 @@ App = {
       App.getEthAddress();
       App.getEthBalances();
       App.getContractAddress();
+      App.getContractOwner();
     });
 
     return App.bindEvents();
@@ -58,6 +59,7 @@ App = {
     $(document).on('click', '#togglePurchasesButton', App.handleTogglePurchases);
     $(document).on('click', '#disableMintingButton', App.handleDisableMinting);
     $(document).on('click', '#selfDestructButton', App.handleSelfDestruct);
+    $(document).on('click', '#transferOwnershipButton', App.handleTransferOwnership);
   },
 
   getEthAddress: function() {
@@ -96,6 +98,19 @@ App = {
     }).then(function(result) {
       address = result;
       $('#ODTContractAddress').text(address);
+    }).catch(function(err) {
+      console.log(err.message);
+    });
+  },
+
+  getContractOwner: function() {
+    var odysseyPresaleToken;
+    App.contracts.OdysseyPresaleToken.deployed().then(function(instance) {
+      odysseyPresaleToken = instance;
+      return odysseyPresaleToken.owner();
+    }).then(function(result) {
+      owner = result;
+      $('#ODTContractOwner').text(owner);
     }).catch(function(err) {
       console.log(err.message);
     });
@@ -500,7 +515,6 @@ App = {
   handleSelfDestruct: function(event) {
     event.preventDefault();
 
-    var toAddress = $('#ODTSelfDestructAddress').val();
     var odysseyPresaleToken;
 
     web3.eth.getAccounts(function(error, accounts) {
@@ -516,10 +530,40 @@ App = {
       var account = accounts[0];
       App.contracts.OdysseyPresaleToken.deployed().then(function(instance) {
         odysseyPresaleToken = instance;
-        console.log(toAddress);
-        return odysseyPresaleToken.selfDestruct(toAddress, {from: account});
+        return odysseyPresaleToken.selfDestruct({from: account});
       }).then(function(result) {
         alert('The contract is dead! All hail the contract!');
+      }).catch(function(err) {
+        console.log(err.message);
+      });
+    });
+  },
+
+  handleTransferOwnership: function(event) {
+    event.preventDefault();
+
+    var newOwner = $('#ODTNewOwnerAddress').val();
+    var odysseyPresaleToken;
+
+    web3.eth.getAccounts(function(error, accounts) {
+      if (error) {
+        console.log(error);
+      }
+
+      let result = confirm(
+        "Are you sure you want to transfer ownership to " + newOwner + "?"
+      );
+
+      if(!result){
+        return;
+      }
+
+      var account = accounts[0];
+      App.contracts.OdysseyPresaleToken.deployed().then(function(instance) {
+        odysseyPresaleToken = instance;
+        return odysseyPresaleToken.transferOwnership(newOwner, {from: account});
+      }).then(function(result) {
+        alert('Contract ownership has been transferred!');
       }).catch(function(err) {
         console.log(err.message);
       });

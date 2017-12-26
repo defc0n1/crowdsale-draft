@@ -55,6 +55,8 @@
               <br />
               <strong>Can Purchase Tokens</strong>: <span id="ODTCanPurchaseTokens"></span>
               <br />
+              <strong>Contract Owner</strong>: <span id="ODTContractOwner"></span>
+              <br />
               <strong>Owner Can Mint Tokens</strong>: <span id="ODTCanMintTokens"></span>
               <br />
             </div>
@@ -119,6 +121,15 @@
                 <h3 class="panel-title">Admin Actions</h3>
               </div>
               <div class="panel-body">
+
+                <h4>Change Contract Ownership</h4>
+                <p>
+                  Set a new contract owner.
+                </p>
+                <input type="text" class="form-control" id="ODTNewOwnerAddress" placeholder="New Owner Address" />
+                <button class="btn btn-danger" id="transferOwnershipButton" type="button">Change Owner</button>
+                <br /><br />
+
                 <h4>Conversion Rate</h4>
                 <p>
                   Set the conversion rate for ODT purchases.
@@ -161,10 +172,9 @@
 
                 <h4>Self-Destruct</h4>
                 <p>
-                  Destroy the contract and drain ether to a given address.
+                  Destroy the contract and drain ether.<br />
                   This is for emergencies only.
                 </p>
-                <input type="text" class="form-control" id="ODTSelfDestructAddress" placeholder="Recipient Address" />
                 <button class="btn btn-danger" id="selfDestructButton" type="button">Self Destruct</button>
                 <br /><br />
               </div>
