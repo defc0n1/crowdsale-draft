@@ -1,24 +1,41 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.18;
 
 import 'zeppelin-solidity/contracts/token/MintableToken.sol';
 
 contract OdysseyPresaleToken is MintableToken {
 
+	/**
+	* Implicit dependencies, stemming from MintableToken import.
+	*	SafeMath.sol
+	* ERC20Basic.sol
+	* ERC20.sol
+	* BasicToken.sol
+	* StandardToken.sol
+	* Ownable.sol
+	*/
+
+	// Basic token properties. ---------------------------
 	string public name = 'OdysseyPresaleToken';
 	string public symbol = 'ODT';
 	uint public decimals = 18;
 	uint public INITIAL_SUPPLY = 12000000;
 
-	// Conversion rate. 1 ether * rate = number of tokens.
-	uint256 public rate;
-	// Allow owner to enable/disable token transfers.
-	bool public isTransferEnabled;
-	// Allow owner to enable/disable purchase of tokens.
-	bool public isPurchaseEnabled;
+	// Custom properties. ---------------------------
+	uint256 public rate; // Conversion rate. 1 ether * rate = number of tokens.
+	bool public isTransferEnabled; // Token transfers enabled/disabled.
+	bool public isPurchaseEnabled; // Token purchases enabled/disabled.
+	address public withdrawalOwner; // Address to which funds can be withdrawn.
+
+	// Custom modifiers. ---------------------------
+	modifier onlyWithdrawalOwner {
+		require(msg.sender == withdrawalOwner);
+		_;
+	}
 
 	/**
   * @dev Constructor.
-  * @dev Set the initial token supply and balances.
+	* @dev FIXME: When using in production, use params to set initial state.
+  * @dev Set initial token supply and balances.
   */
 	function OdysseyPresaleToken() public {
 		totalSupply = INITIAL_SUPPLY;
@@ -26,11 +43,14 @@ contract OdysseyPresaleToken is MintableToken {
 		isTransferEnabled = true;
 		isPurchaseEnabled = true;
 		rate = 3;
+		withdrawalOwner = msg.sender;
 	}
+
+	// Setters. ---------------------------
 
 	/**
 	* @dev Change the conversion rate at which tokens may be purchased.
-	* @param _rate The conversion rate of wei to tokens.
+	* @param _rate Conversion rate of ether to tokens.
 	*/
 	function setRate(uint256 _rate) public onlyOwner returns (bool) {
 		rate = _rate;
@@ -39,9 +59,7 @@ contract OdysseyPresaleToken is MintableToken {
 
 	/**
 	* @dev Enable or disable the ability to transfer tokens.
-	* @dev This is useful to prevent premature or unfair access to exchanges.
-	* @dev Note that actually using this bool isn't trivial.
-	* @dev Disabling transfers shouldn't disable purchases.
+	* @dev Should not affect ability to purchase tokens.
 	*/
 	function toggleTransfers() public onlyOwner returns (bool) {
 		isTransferEnabled = !isTransferEnabled;
@@ -50,11 +68,25 @@ contract OdysseyPresaleToken is MintableToken {
 
 	/**
 	* @dev Enable or disable the ability to purchase tokens.
+	* @dev Should not affect ability to transfer tokens.
 	*/
 	function togglePurchases() public onlyOwner returns (bool) {
 		isPurchaseEnabled = !isPurchaseEnabled;
 		return true;
 	}
+
+	/**
+	* @dev Allow the contract owner to set the withdraw address.
+	* @dev FIXME: It might be best if this function is removed in production,
+	* @dev FIXME: opting to only set withdrawalOwner in the constructor.
+	* @param _withdrawalOwner The new withdrawal owner.
+	*/
+	function setWithdrawalOwner(address _withdrawalOwner) public onlyOwner returns (bool) {
+		withdrawalOwner = _withdrawalOwner;
+		return true;
+	}
+
+	// Utility functions. ---------------------------
 
 	/**
  	* @dev Purchase tokens at a set rate.
@@ -69,7 +101,7 @@ contract OdysseyPresaleToken is MintableToken {
 		require(isPurchaseEnabled);
 		require(balances[owner] < numberOfTokens);
 
-		// TODO: There's a better way to do this.
+		// TODO: There's a better/safer way to do this.
 		balances[owner] -= numberOfTokens;
 		balances[_to] += numberOfTokens;
 	}
@@ -94,10 +126,20 @@ contract OdysseyPresaleToken is MintableToken {
   }
 
 	/**
- 	* @dev Destroy the contract and drain any ether to a specified address.
-	* @param _to address The address to which to transfer any ether.
+ 	* @dev Withdraw ether to withdrawalOwner address.
+	* @dev This separates contract ownership from the management of funds.
+	* @dev Think least privilege, separation of concerns.
+	* @param _amount The amount of ether to withdraw.
  	*/
-	function selfDestruct(address _to) public onlyOwner {
-		selfdestruct(_to);
+	function withdrawEther(uint256 _amount) public payable onlyWithdrawalOwner returns (bool) {
+		bool success = withdrawalOwner.send(_amount);
+		return success;
+	}
+
+	/**
+ 	* @dev Destroy the contract and drain any ether to withdrawalOwner.
+ 	*/
+	function selfDestruct() public onlyOwner {
+		selfdestruct(withdrawalOwner);
 	}
 }
