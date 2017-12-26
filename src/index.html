@@ -49,13 +49,15 @@
               <br />
               <strong>Total Supply</strong>: <span id="ODTTotalSupply"></span>&nbsp;ODT
               <br />
+              <strong>Contract Owner</strong>: <span id="ODTContractOwner"></span>
+              <br />
+              <strong>Withdrawal Owner</strong>: <span id="ODTWithdrawalOwner"></span>
+              <br />
               <strong>Token Rate</strong>: <span id="ODTTokenRate"></span>&nbsp;ODT/ETH
               <br />
               <strong>Can Transfer Tokens</strong>: <span id="ODTCanTransferTokens"></span>
               <br />
               <strong>Can Purchase Tokens</strong>: <span id="ODTCanPurchaseTokens"></span>
-              <br />
-              <strong>Contract Owner</strong>: <span id="ODTContractOwner"></span>
               <br />
               <strong>Owner Can Mint Tokens</strong>: <span id="ODTCanMintTokens"></span>
               <br />
@@ -130,9 +132,17 @@
                 <button class="btn btn-danger" id="transferOwnershipButton" type="button">Change Owner</button>
                 <br /><br />
 
-                <h4>Conversion Rate</h4>
+                <h4>Change Withdrawal Ownership</h4>
                 <p>
-                  Set the conversion rate for ODT purchases.
+                  Set a new withdrawal owner.
+                </p>
+                <input type="text" class="form-control" id="ODTNewWithdrawalOwnerAddress" placeholder="New Withdrawal Address" />
+                <button class="btn btn-danger" id="transferWithdrawalOwnershipButton" type="button">Change Owner</button>
+                <br /><br />
+
+                <h4>Change Conversion Rate</h4>
+                <p>
+                  Set new conversion rate for ODT purchases.
                 </p>
                 <input type="text" class="form-control" id="ODTConversionRate" placeholder="New Rate (ODT/ETH)" />
                 <button class="btn btn-danger" id="setRateButton" type="button">Change Rate</button>
@@ -170,7 +180,7 @@
                 <button class="btn btn-danger" id="disableMintingButton" type="button">Disable Minting</button>
                 <br /><br />
 
-                <h4>Self-Destruct</h4>
+                <h4>Kill Contract (Self-Destruct)</h4>
                 <p>
                   Destroy the contract and drain ether.<br />
                   This is for emergencies only.

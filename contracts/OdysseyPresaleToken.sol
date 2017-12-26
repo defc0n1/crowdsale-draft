@@ -81,7 +81,7 @@ contract OdysseyPresaleToken is MintableToken {
 	* @dev FIXME: opting to only set withdrawalOwner in the constructor.
 	* @param _withdrawalOwner The new withdrawal owner.
 	*/
-	function setWithdrawalOwner(address _withdrawalOwner) public onlyOwner returns (bool) {
+	function transferWithdrawalOwnership(address _withdrawalOwner) public onlyOwner returns (bool) {
 		withdrawalOwner = _withdrawalOwner;
 		return true;
 	}

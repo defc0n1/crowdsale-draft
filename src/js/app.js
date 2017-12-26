@@ -44,6 +44,7 @@ App = {
       App.getEthBalances();
       App.getContractAddress();
       App.getContractOwner();
+      App.getContractWithdrawalOwner();
     });
 
     return App.bindEvents();
@@ -60,6 +61,7 @@ App = {
     $(document).on('click', '#disableMintingButton', App.handleDisableMinting);
     $(document).on('click', '#selfDestructButton', App.handleSelfDestruct);
     $(document).on('click', '#transferOwnershipButton', App.handleTransferOwnership);
+    $(document).on('click', '#transferWithdrawalOwnershipButton', App.handleTransferWithdrawalOwnership);
   },
 
   getEthAddress: function() {
@@ -111,6 +113,19 @@ App = {
     }).then(function(result) {
       owner = result;
       $('#ODTContractOwner').text(owner);
+    }).catch(function(err) {
+      console.log(err.message);
+    });
+  },
+
+  getContractWithdrawalOwner: function() {
+    var odysseyPresaleToken;
+    App.contracts.OdysseyPresaleToken.deployed().then(function(instance) {
+      odysseyPresaleToken = instance;
+      return odysseyPresaleToken.withdrawalOwner();
+    }).then(function(result) {
+      owner = result;
+      $('#ODTWithdrawalOwner').text(owner);
     }).catch(function(err) {
       console.log(err.message);
     });
@@ -564,6 +579,37 @@ App = {
         return odysseyPresaleToken.transferOwnership(newOwner, {from: account});
       }).then(function(result) {
         alert('Contract ownership has been transferred!');
+      }).catch(function(err) {
+        console.log(err.message);
+      });
+    });
+  },
+
+  handleTransferWithdrawalOwnership: function(event) {
+    event.preventDefault();
+
+    var newWithdrawalOwner = $('#ODTNewWithdrawalOwnerAddress').val();
+    var odysseyPresaleToken;
+
+    web3.eth.getAccounts(function(error, accounts) {
+      if (error) {
+        console.log(error);
+      }
+
+      let result = confirm(
+        "Are you sure you want to transfer withdrawal ownership to " + newWithdrawalOwner + "?"
+      );
+
+      if(!result){
+        return;
+      }
+
+      var account = accounts[0];
+      App.contracts.OdysseyPresaleToken.deployed().then(function(instance) {
+        odysseyPresaleToken = instance;
+        return odysseyPresaleToken.transferWithdrawalOwnership(newWithdrawalOwner, {from: account});
+      }).then(function(result) {
+        alert('Withdrawal ownership has been transferred!');
       }).catch(function(err) {
         console.log(err.message);
       });
