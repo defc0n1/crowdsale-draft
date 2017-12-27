@@ -119,7 +119,7 @@ App = {
   },
 
   getInitialSupply: function() {
-    App.tokenInstance.INITIAL_SUPPLY().then(function(result) {
+    App.tokenInstance.initialSupply().then(function(result) {
       initialSupply = result;
       initialSupply = formatter.format(initialSupply);
       $('#ODTInitialSupply').text(initialSupply);

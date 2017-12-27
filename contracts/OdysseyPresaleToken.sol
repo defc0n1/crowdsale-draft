@@ -18,7 +18,7 @@ contract OdysseyPresaleToken is MintableToken {
 	string public name = 'OdysseyPresaleToken';
 	string public symbol = 'ODT';
 	uint public decimals = 18;
-	uint public INITIAL_SUPPLY = 12000000;
+	uint public initialSupply = 12000000;
 
 	// Custom properties. ---------------------------
 	uint256 public rate; // Conversion rate. 1 ether * rate = number of tokens.
@@ -38,8 +38,8 @@ contract OdysseyPresaleToken is MintableToken {
   * @dev Set initial token supply and balances.
   */
 	function OdysseyPresaleToken() public {
-		totalSupply = INITIAL_SUPPLY;
-		balances[msg.sender] = INITIAL_SUPPLY;
+		totalSupply = initialSupply;
+		balances[msg.sender] = initialSupply;
 		isTransferEnabled = true;
 		isPurchaseEnabled = true;
 		rate = 3;

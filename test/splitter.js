@@ -28,7 +28,7 @@ contract('Splitter', function(accounts) {
             let percent = await spl.split.call(addr);
             let val = transferValue * percent.div(10000);
             let bal = await spl.balances.call(addr);
-            sum += bal.toNumber(); 
+            sum += bal.toNumber();
             assert.equal(bal.toNumber(), Math.floor(val, 0), "Value incorrect for address " + addr);
         }
     });
@@ -82,5 +82,5 @@ contract('Splitter', function(accounts) {
         assert.equal(ownerNewBal.plus(txCost).minus(left).toNumber(), ownerBal.toNumber(), "Bob after withdraw balance incorrect.");
 
     });
-    
+
 });
