@@ -17,7 +17,7 @@ contract('OdysseyPresaleToken', function(accounts) {
 
   // FIXME: Not sure why this one is failing.
   // Transfering ownership seens to work fine via the UI.
-  it('should change owner to 0xF557962b6D1A0Be0c71B3b5289fE22441feCE4eA.', function() {
+  it('should change contract ownership.', function() {
     var newOwner = '0xF557962b6D1A0Be0c71B3b5289fE22441feCE4eA';
     var contract;
     return OdysseyPresaleToken.deployed().then(function(instance) {
@@ -29,7 +29,7 @@ contract('OdysseyPresaleToken', function(accounts) {
       assert.equal(owner.valueOf(), newOwner, 'Owner was not updated.');
     });
   });
-  
+
   it('should owner\'s initial token balance be equal to initial supply.', function() {
     var ownerBalance;
     var contract;

@@ -1,7 +1,26 @@
+.container {
+  width: 1280px;
+}
+
+.main-header {
+  font-size: 26px;
+  vertical-align: middle;
+}
+
 .main-logo {
-  width: 64px;
+  width: 56px;
+}
+
+.main-header,
+hr {
+  margin: 15px;
 }
 
 .form-control {
   margin-bottom: 10px;
+}
+
+.address {
+  font-stretch: condensed;
+  font-size: 11px;
 }

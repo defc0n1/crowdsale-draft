@@ -22,19 +22,19 @@
   <body>
     <div class="container">
       <div class="row">
-        <h1 class="text-center">
+        <h1 class="main-header text-center">
           <img class='main-logo' src='images/Odyssey-blue-logo-sm.png' />
           Odyssey Crowdsale Dashboard
         </h1>
-        <hr/>
-        <br/>
+        <hr />
+        <br />
       </div>
 
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title">Contract Info</h3>
+              <h3 class="panel-title">Contract Information</h3>
             </div>
             <div class="panel-body">
               <h4>Contract</h4>
@@ -43,15 +43,18 @@
               <br />
               <strong>Decimals</strong>: <span id="ODTDecimals"></span>
               <br />
-              <strong>Contract Address</strong>: <span id="ODTContractAddress"></span>
+              <strong>Contract Address</strong>:
+              <span id="ODTContractAddress" class="address"></span>
               <br />
               <strong>Initial Supply</strong>: <span id="ODTInitialSupply"></span>&nbsp;ODT
               <br />
               <strong>Total Supply</strong>: <span id="ODTTotalSupply"></span>&nbsp;ODT
               <br />
-              <strong>Contract Owner</strong>: <span id="ODTContractOwner"></span>
+              <strong>Contract Owner</strong>:
+              <span id="ODTContractOwner" class="address"></span>
               <br />
-              <strong>Withdrawal Owner</strong>: <span id="ODTWithdrawalOwner"></span>
+              <strong>Withdrawal Owner</strong>:
+              <span id="ODTWithdrawalOwner" class="address"></span>
               <br />
               <strong>Token Rate</strong>: <span id="ODTTokenRate"></span>&nbsp;ODT/ETH
               <br />
@@ -66,22 +69,23 @@
 
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title">Wallet Info</h3>
+              <h3 class="panel-title">Wallet Information</h3>
             </div>
             <div class="panel-body">
               <h4>Wallet & Tokens</h4>
 
-              <strong>Wallet Address</strong>: <span id="ETHAddress"></span>
+              <strong>Wallet Address</strong>:
+              <span id="ETHAddress" class="address"></span>
               <br />
               <strong>ETH Balance</strong>: <span id="ETHBalance"></span>&nbsp;ETH
               <br />
               <strong>ODT Balance</strong>: <span id="ODTBalance"></span>&nbsp;ODT
-              <br /><br />
+              <br />
             </div>
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
           <div class="panel panel-default">
             <div class="panel-heading">
               <h3 class="panel-title">User Actions</h3>
@@ -111,13 +115,13 @@
               </p>
               <input type="text" class="form-control" id="ODTBalanceAddress" placeholder="Address" />
               <button class="btn btn-primary" id="balanceButton" type="button">Get Balance</button>
-              <br /><br />
+              <br />
             </div>
           </div>
         </div>
 
         <div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h3 class="panel-title">Admin Actions</h3>
@@ -155,8 +159,17 @@
                 <input type="text" class="form-control" id="ODTMintAddress" placeholder="Recipient Address" />
                 <input type="text" class="form-control" id="ODTMintAmount" placeholder="Amount" />
                 <button class="btn btn-danger" id="mintButton" type="button">Mint Tokens</button>
-                <br /><br />
+                <br />
+              </div>
+            </div>
+          </div>
 
+          <div class="col-md-3">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Admin Actions (Continued)</h3>
+              </div>
+              <div class="panel-body">
                 <h4>Enable/Disable Token Transfers</h4>
                 <p>
                   Enable or disable the ability to transfer tokens.
@@ -186,7 +199,7 @@
                   This is for emergencies only.
                 </p>
                 <button class="btn btn-danger" id="selfDestructButton" type="button">Self Destruct</button>
-                <br /><br />
+                <br />
               </div>
             </div>
           </div>
