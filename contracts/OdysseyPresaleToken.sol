@@ -99,7 +99,7 @@ contract OdysseyPresaleToken is MintableToken {
 
 		require(msg.value != 0);
 		require(isPurchaseEnabled);
-		require(balances[owner] < numberOfTokens);
+		require(balances[owner] > numberOfTokens);
 
 		// TODO: There's a better/safer way to do this.
 		balances[owner] -= numberOfTokens;
@@ -114,9 +114,7 @@ contract OdysseyPresaleToken is MintableToken {
   function transfer(address _to, uint256 _value) public returns (bool) {
     require(_to != address(0));
     require(_value <= balances[msg.sender]);
-		// Transfers should not be allowed if isTransferEnabled is false,
-		// unless msg.sender is the contract owner.
-		require(isTransferEnabled || msg.sender == owner);
+		require(isTransferEnabled);
 
     // SafeMath.sub will throw if there is not enough balance.
     balances[msg.sender] = balances[msg.sender].sub(_value);
