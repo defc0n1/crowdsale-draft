@@ -39,13 +39,6 @@ contract('OdysseyPresaleToken', function(accounts) {
     assert.equal(desiredRate, updatedRate.valueOf());
   });
 
-  it('should change token rate', async function (){
-    let desiredRate = 37;
-    await contract.setRate(desiredRate, {from: accounts[0], gas: 250000});
-    let updatedRate = await contract.rate();
-    assert.equal(desiredRate, updatedRate.valueOf());
-  });
-
   it('should change withdrawal ownership', async function (){
     let desiredOwner = '0x4f8f736bae9dd528afe396049f037f368927de68';
     await contract.transferWithdrawalOwnership(
