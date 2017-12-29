@@ -86,7 +86,7 @@ contract OdysseyPresaleToken is MintableToken {
 		return true;
 	}
 
-	// Utility functions. ---------------------------
+	// Utility functions. ----------------------------
 
 	/**
  	* @dev Purchase tokens at a set rate.
@@ -98,12 +98,17 @@ contract OdysseyPresaleToken is MintableToken {
 		uint256 numberOfTokens = (msg.value / 1000000000000000000) * rate;
 
 		require(msg.value != 0);
+		require(_to != address(0));
 		require(isPurchaseEnabled);
-		require(balances[owner] > numberOfTokens);
+		require(numberOfTokens <= balances[owner]);
 
-		// TODO: There's a better/safer way to do this.
-		balances[owner] -= numberOfTokens;
-		balances[_to] += numberOfTokens;
+		// SafeMath.sub will throw if there is not enough balance.
+		balances[msg.sender] = balances[msg.sender].sub(numberOfTokens);
+		balances[_to] = balances[_to].add(numberOfTokens);
+
+		// Trigger event.
+		Transfer(msg.sender, _to, numberOfTokens);
+		return true;
 	}
 
 	/**
