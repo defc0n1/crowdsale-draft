@@ -42,7 +42,7 @@ contract OdysseyPresaleToken is MintableToken {
 		balances[msg.sender] = initialSupply;
 		isTransferEnabled = true;
 		isPurchaseEnabled = true;
-		rate = 3;
+		rate = 60;
 		withdrawalOwner = msg.sender;
 	}
 
@@ -99,7 +99,7 @@ contract OdysseyPresaleToken is MintableToken {
 
 		require(msg.value != 0);
 		require(_to != address(0));
-		require(isPurchaseEnabled);
+		require(isPurchaseEnabled); // Allows token purchases to be disabled.
 		require(numberOfTokens <= balances[owner]);
 
 		// SafeMath.sub will throw if there is not enough balance.
@@ -113,13 +113,15 @@ contract OdysseyPresaleToken is MintableToken {
 
 	/**
   * @dev Transfer tokens to a specified address.
+	* @dev This is used instead of the normal transfer() function
+	* @dev as it adds a check for isTransferEnabled.
   * @param _to The address to transfer to.
   * @param _value The amount to be transferred.
   */
   function transfer(address _to, uint256 _value) public returns (bool) {
     require(_to != address(0));
     require(_value <= balances[msg.sender]);
-		require(isTransferEnabled);
+		require(isTransferEnabled); // Allows token transfers to be disabled.
 
     // SafeMath.sub will throw if there is not enough balance.
     balances[msg.sender] = balances[msg.sender].sub(_value);
@@ -141,6 +143,7 @@ contract OdysseyPresaleToken is MintableToken {
 
 	/**
  	* @dev Destroy the contract and drain any ether to withdrawalOwner.
+	* @dev FIXME: This might be best left out in production.
  	*/
 	function selfDestruct() public onlyOwner {
 		selfdestruct(withdrawalOwner);

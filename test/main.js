@@ -1,4 +1,9 @@
 var OdysseyPresaleToken = artifacts.require('OdysseyPresaleToken');
+//var assertRevert = require('zeppelin-solidity/test/helpers/assertRevert');
+
+function assertJump(error) {
+  assert.isAbove(error.message.search('invalid opcode'), -1, 'Invalid opcode error must be returned');
+}
 
 contract('OdysseyPresaleToken', function(accounts) {
 
@@ -37,15 +42,6 @@ contract('OdysseyPresaleToken', function(accounts) {
     await contract.setRate(desiredRate, {from: accounts[0], gas: 250000});
     let updatedRate = await contract.rate();
     assert.equal(desiredRate, updatedRate.valueOf());
-  });
-
-  it('should change withdrawal ownership', async function (){
-    let desiredOwner = '0x4f8f736bae9dd528afe396049f037f368927de68';
-    await contract.transferWithdrawalOwnership(
-      desiredOwner, {from: accounts[0], gas: 250000}
-    );
-    let updatedOwner = await contract.withdrawalOwner();
-    assert.equal(desiredOwner, updatedOwner.valueOf());
   });
 
   it('should mint 9601 tokens and transfer them to an arbitrary address', async function(){
@@ -108,8 +104,45 @@ contract('OdysseyPresaleToken', function(accounts) {
     );
   });
 
-  // Make sure this does not precede other tests.
-  it('should change contract ownership', async function (){
+  it('should prevent token transfers when transfers are disabled', async function(){
+    let recipient = '0x950E573130697bb013D4ecA2d01a718a0286B322';
+    let numberOfTokens = 1613;
+    let reverted;
+    let canTransfer = await contract.isTransferEnabled();
+    // Make sure transfers are disabled.
+    if(canTransfer){
+      await contract.toggleTransfers();
+    }
+
+    try {
+      let transaction = await contract.transfer(
+        recipient, numberOfTokens, {from: accounts[0], gas: 250000}
+      );
+    } catch(error) {
+      reverted = true;
+    }
+    assert.isTrue(reverted, 'Transfer did not revert when transfers are disabled.');
+  });
+});
+
+contract('OdysseyPresaleToken', function(accounts) {
+
+  let contract;
+
+  before('deploy new OdysseyPresaleToken', async () => {
+      contract = await OdysseyPresaleToken.deployed();
+  });
+
+  it('should change withdrawal owner', async function (){
+    let desiredOwner = '0x4f8f736bae9dd528afe396049f037f368927de68';
+    await contract.transferWithdrawalOwnership(
+      desiredOwner, {from: accounts[0], gas: 250000}
+    );
+    let updatedOwner = await contract.withdrawalOwner();
+    assert.equal(desiredOwner, updatedOwner.valueOf());
+  });
+
+  it('should change contract owner', async function (){
     let desiredOwner = '0x4f8f736bae9dd528afe396049f037f368927de68';
     await contract.transferOwnership(
       desiredOwner, {from: accounts[0], gas: 250000}
@@ -117,5 +150,36 @@ contract('OdysseyPresaleToken', function(accounts) {
     let updatedOwner = await contract.owner();
     assert.equal(desiredOwner, updatedOwner.valueOf());
   });
+});
 
+contract('OdysseyPresaleToken', function(accounts) {
+
+  let contract;
+  let owner;
+  let tokenRecipient = accounts[1];
+
+  before('deploy new OdysseyPresaleToken', async () => {
+      contract = await OdysseyPresaleToken.deployed();
+      // Get contract owner.
+      owner = await contract.owner();
+      // Transfer ether from owner to arbitrary account.
+      //let amount = web3.toWei(5.0, "ether");
+      //await web3.eth.sendTransaction(
+      //  {from: owner, to: tokenPurchaser, value: amount}
+      //);
+  });
+
+  it('should purchase 120 tokens and send them to a given address', async function (){
+    // Purchase tokens.
+    let amount = web3.toWei(2.0, "ether");
+    await contract.purchase(
+      tokenRecipient, {from: owner, value: amount, gas: 250000}
+    );
+    tokenRecipientBalance = await contract.balanceOf(tokenRecipient);
+    assert.equal(
+      tokenRecipientBalance.valueOf(),
+      120,
+      'Incorrect recipient token balance after purchase.'
+    );
+  });
 });
