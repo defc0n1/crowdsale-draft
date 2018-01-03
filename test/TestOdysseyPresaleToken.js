@@ -154,7 +154,8 @@ contract('OdysseyPresaleToken', function(accounts) {
       let updatedOwnerBalance = await web3.eth.getBalance(owner);
 
       assert.equal(
-        parseInt(ownerBalance.valueOf()) + parseInt(contractBalance.valueOf()) - txCost,
+        // Use BigNumber operations to prevent rounding errors.
+        ownerBalance.add(contractBalance).sub(txCost),
         updatedOwnerBalance.valueOf(),
         'Failed to withdraw ether from contract.'
       );
