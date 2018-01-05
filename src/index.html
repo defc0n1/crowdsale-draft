@@ -34,35 +34,47 @@
         <div class="col-md-3">
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title">Contract Information</h3>
+              <h3 class="panel-title">Token Contract</h3>
             </div>
             <div class="panel-body">
               <h4>Contract</h4>
 
-              <strong>Token Name</strong>: <span id="ODTTokenName"></span>
+              <strong>Token Name</strong>: <span id="TokenName"></span>
               <br />
-              <strong>Decimals</strong>: <span id="ODTDecimals"></span>
+              <strong>Decimals</strong>: <span id="TokenDecimals"></span>
               <br />
               <strong>Contract Address</strong>:
-              <span id="ODTContractAddress" class="address"></span>
+              <span id="TokenContractAddress" class="address"></span>
               <br />
-              <strong>Initial Supply</strong>: <span id="ODTInitialSupply"></span>&nbsp;ODT
+              <strong>Initial Supply</strong>: <span id="TokenInitialSupply"></span>&nbsp;ODT
               <br />
-              <strong>Total Supply</strong>: <span id="ODTTotalSupply"></span>&nbsp;ODT
+              <strong>Total Supply</strong>: <span id="TokenTotalSupply"></span>&nbsp;ODT
               <br />
               <strong>Contract Owner</strong>:
-              <span id="ODTContractOwner" class="address"></span>
+              <span id="TokenContractOwner" class="address"></span>
               <br />
-              <strong>Withdrawal Owner</strong>:
-              <span id="ODTWithdrawalOwner" class="address"></span>
+              <strong>Can Transfer Tokens</strong>: <span id="TokenCanTransferTokens"></span>
               <br />
-              <strong>Token Rate</strong>: <span id="ODTTokenRate"></span>&nbsp;ODT/ETH
+              <strong>Owner Can Mint Tokens</strong>: <span id="TokenCanMintTokens"></span>
               <br />
-              <strong>Can Transfer Tokens</strong>: <span id="ODTCanTransferTokens"></span>
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Presale Contract</h3>
+            </div>
+            <div class="panel-body">
+              <h4>Presale</h4>
+              <strong>Contract Address</strong>:
+              <span id="PresaleContractAddress" class="address"></span>
               <br />
-              <strong>Can Purchase Tokens</strong>: <span id="ODTCanPurchaseTokens"></span>
+              <strong>Can Purchase Tokens</strong>: <span id="PresaleCanPurchaseTokens"></span>
               <br />
-              <strong>Owner Can Mint Tokens</strong>: <span id="ODTCanMintTokens"></span>
+              <strong>Token Rate</strong>: <span id="PresaleRate"></span>&nbsp;ODT/ETH
+              <br />
+              <strong>Contract Owner</strong>:
+              <span id="PresaleContractOwner" class="address"></span>
               <br />
             </div>
           </div>
@@ -75,11 +87,11 @@
               <h4>Wallet & Tokens</h4>
 
               <strong>Wallet Address</strong>:
-              <span id="ETHAddress" class="address"></span>
+              <span id="WalletEtherAddress" class="address"></span>
               <br />
-              <strong>ETH Balance</strong>: <span id="ETHBalance"></span>&nbsp;ETH
+              <strong>ETH Balance</strong>: <span id="WalletEtherBalance"></span>&nbsp;ETH
               <br />
-              <strong>ODT Balance</strong>: <span id="ODTBalance"></span>&nbsp;ODT
+              <strong>ODT Balance</strong>: <span id="WalletTokenBalance"></span>&nbsp;ODT
               <br />
             </div>
           </div>

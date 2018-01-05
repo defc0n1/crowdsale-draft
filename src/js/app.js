@@ -32,37 +32,60 @@ App = {
       App.getEthAddress();
       App.getEthBalance();
     });
-    return App.initContract();
+    return App.initTokenContract();
   },
 
-  initContract: function() {
-    $.getJSON('OdysseyPresaleToken.json', function(data) {
+  initTokenContract: function() {
+    $.getJSON('OdysseyToken.json', function(data) {
 
       // Get the necessary contract artifact file and instantiate it with truffle-contract.
-      var OdysseyPresaleTokenArtifact = data;
-      App.contracts.OdysseyPresaleToken = TruffleContract(OdysseyPresaleTokenArtifact);
+      var OdysseyTokenArtifact = data;
+      App.contracts.OdysseyToken = TruffleContract(OdysseyTokenArtifact);
 
       // Set the provider for our contract.
-      App.contracts.OdysseyPresaleToken.setProvider(App.web3Provider);
+      App.contracts.OdysseyToken.setProvider(App.web3Provider);
 
       // Get the contract instance.
-      App.contracts.OdysseyPresaleToken.deployed().then(function(instance) {
+      App.contracts.OdysseyToken.deployed().then(function(instance) {
         App.tokenInstance = instance;
       }).then(function() {
         console.log(App.tokenInstance);
         // Get contract info.
-        App.getContractAddress();
+        App.getTokenContractAddress();
         App.getContractDecimals();
         App.getTokenName();
         App.getInitialSupply();
         App.getOdtBalance(App.primaryAccount);
-        App.getContractOwner();
-        App.getWithdrawalOwner();
+        App.getTokenContractOwner();
         App.getTotalSupply();
-        App.getTokenRate();
         App.getIsMintingFinished();
         App.getIsTransferEnabled();
+      });
+    });
+
+    return App.initPresaleContract();
+  },
+
+  initPresaleContract: function() {
+    $.getJSON('OdysseyPresale.json', function(data) {
+
+      // Get the necessary contract artifact file and instantiate it with truffle-contract.
+      var OdysseyPresaleArtifact = data;
+      App.contracts.OdysseyPresale = TruffleContract(OdysseyPresaleArtifact);
+
+      // Set the provider for our contract.
+      App.contracts.OdysseyPresale.setProvider(App.web3Provider);
+
+      // Get the contract instance.
+      App.contracts.OdysseyPresale.deployed().then(function(instance) {
+        App.presaleInstance = instance;
+      }).then(function() {
+        console.log(App.presaleInstance);
+
+        App.getTokenRate();
         App.getIsPurchaseEnabled();
+        App.getPresaleContractAddress();
+        App.getPresaleContractOwner();
       });
     });
 
@@ -80,41 +103,40 @@ App = {
     $(document).on('click', '#disableMintingButton', App.handleDisableMinting);
     $(document).on('click', '#selfDestructButton', App.handleSelfDestruct);
     $(document).on('click', '#transferOwnershipButton', App.handleTransferOwnership);
-    $(document).on('click', '#transferWithdrawalOwnershipButton', App.handleTransferWithdrawalOwnership);
   },
 
   // Wallet functions. --------------------------------------------------------
 
   getEthAddress: function() {
     var address = App.primaryAccount;
-    $('#ETHAddress').text(address);
+    $('#WalletEtherAddress').text(address);
   },
 
   getEthBalance: function() {
     web3.eth.getBalance(
       App.primaryAccount, function(error, balance) {
         balance = web3.fromWei(balance);
-        $('#ETHBalance').text(balance);
+        $('#WalletEtherBalance').text(balance);
     });
   },
 
   // Contract getters. --------------------------------------------------------
 
-  getContractAddress: function(adopters, account) {
+  getTokenContractAddress: function(adopters, account) {
     var address = App.tokenInstance.address;
-    $('#ODTContractAddress').text(address);
+    $('#TokenContractAddress').text(address);
   },
 
   getContractDecimals: function() {
     App.tokenInstance.decimals().then(function(result) {
       decimals = result.c[0];
-      $('#ODTDecimals').text(decimals);
+      $('#TokenDecimals').text(decimals);
     });
   },
 
   getTokenName: function() {
     App.tokenInstance.name().then(function(result) {
-      $('#ODTTokenName').text(result);
+      $('#TokenTokenName').text(result);
     });
   },
 
@@ -122,7 +144,7 @@ App = {
     App.tokenInstance.initialSupply().then(function(result) {
       initialSupply = result;
       initialSupply = formatter.format(initialSupply);
-      $('#ODTInitialSupply').text(initialSupply);
+      $('#TokenInitialSupply').text(initialSupply);
     });
   },
 
@@ -130,19 +152,13 @@ App = {
     App.tokenInstance.balanceOf(account).then(function(result) {
       balance = result.c[0];
       balance = formatter.format(balance);
-      $('#ODTBalance').text(balance);
+      $('#WalletTokenBalance').text(balance);
     });
   },
 
-  getContractOwner: function() {
+  getTokenContractOwner: function() {
     App.tokenInstance.owner().then(function(result) {;
-      $('#ODTContractOwner').text(result);
-    });
-  },
-
-  getWithdrawalOwner: function() {
-    App.tokenInstance.withdrawalOwner().then(function(result) {
-      $('#ODTWithdrawalOwner').text(result);
+      $('#TokenContractOwner').text(result);
     });
   },
 
@@ -150,13 +166,7 @@ App = {
     App.tokenInstance.totalSupply().then(function(result) {
       totalSupply = result;
       totalSupply = formatter.format(totalSupply);
-      $('#ODTTotalSupply').text(totalSupply);
-    });
-  },
-
-  getTokenRate: function() {
-    App.tokenInstance.rate().then(function(result) {
-      $('#ODTTokenRate').text(result);
+      $('#TokenTotalSupply').text(totalSupply);
     });
   },
 
@@ -164,7 +174,7 @@ App = {
     App.tokenInstance.mintingFinished().then(function(result) {
       // Negate the bool. We just care if we can mint new tokens.
       let canMintTokens = (!result).toString().capitalize();
-      $('#ODTCanMintTokens').text(canMintTokens);
+      $('#TokenCanMintTokens').text(canMintTokens);
     });
   },
 
@@ -172,16 +182,36 @@ App = {
     App.tokenInstance.isTransferEnabled().then(function(result) {
       isTransferEnabled = result;
       let canTransferTokens = (isTransferEnabled).toString().capitalize();
-      $('#ODTCanTransferTokens').text(canTransferTokens);
+      $('#TokenCanTransferTokens').text(canTransferTokens);
+    });
+  },
+
+  /* Presale Contract. */
+
+  getTokenRate: function() {
+    App.presaleInstance.rate().then(function(result) {
+      $('#PresaleRate').text(result);
     });
   },
 
   getIsPurchaseEnabled: function() {
-    App.tokenInstance.isPurchaseEnabled().then(function(result) {
+    App.presaleInstance.isPurchaseEnabled().then(function(result) {
       isPurchaseEnabled = result;
+      console.log(result);
       let canPurchaseTokens = (isPurchaseEnabled).toString().capitalize();
-      $('#ODTCanPurchaseTokens').text(canPurchaseTokens);
+      $('#PresaleCanPurchaseTokens').text(canPurchaseTokens);
     });
+  },
+
+  getPresaleContractOwner: function() {
+    App.presaleInstance.owner().then(function(result) {
+      $('#PresaleContractOwner').text(result);
+    });
+  },
+
+  getPresaleContractAddress: function(adopters, account) {
+    var address = App.presaleInstance.address;
+    $('#PresaleContractAddress').text(address);
   },
 
   // Contract utility functions. ----------------------------------------------
@@ -313,7 +343,7 @@ App = {
   handleSelfDestruct: function(event) {
     event.preventDefault();
 
-    var odysseyPresaleToken;
+    var OdysseyToken;
 
     web3.eth.getAccounts(function(error, accounts) {
       if (error) {
@@ -326,9 +356,9 @@ App = {
       }
 
       var account = accounts[0];
-      App.contracts.OdysseyPresaleToken.deployed().then(function(instance) {
-        odysseyPresaleToken = instance;
-        return odysseyPresaleToken.selfDestruct({from: account});
+      App.contracts.OdysseyToken.deployed().then(function(instance) {
+        OdysseyToken = instance;
+        return OdysseyToken.selfDestruct({from: account});
       }).then(function(result) {
         alert('The contract is dead! All hail the contract!');
       }).catch(function(err) {
@@ -355,26 +385,6 @@ App = {
       alert('Contract ownership has been transferred!');
     });
   },
-
-  handleTransferWithdrawalOwnership: function(event) {
-
-    event.preventDefault();
-    var newWithdrawalOwner = $('#ODTNewWithdrawalOwnerAddress').val();
-
-    let result = confirm(
-      "Are you sure you want to transfer withdrawal ownership to " + newWithdrawalOwner + "?"
-    );
-    if(!result){
-      return;
-    }
-
-    App.tokenInstance.transferWithdrawalOwnership(
-      newWithdrawalOwner, {from: App.primaryAccount}
-    ).then(function(result) {
-      alert('Withdrawal ownership has been transferred!');
-    });
-  },
-
 };
 
 $(function() {
