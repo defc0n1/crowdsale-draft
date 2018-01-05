@@ -12,24 +12,87 @@ contract OdysseyPresale is Ownable {
   address public owner; // Owner of the contract.
   address public wallet; // Address to which funds can be withdrawn.
   bool public isPurchaseEnabled; // Token purchases enabled/disabled.
-  uint256 public rate; // Conversion rate. 1 ether * rate = number of tokens.
+  uint256 public cap; // Fixed cap for this round of the sale.
+  uint256 public rate; // How many token units a buyer gets per wei.
+  uint256 public weiRaised; // Amount of raised money in wei.
+
+  // Events.
   event Purchase(address indexed from, address indexed to, uint256 value);
 
   /**
   * @dev Constructor.
   * @dev Set initial contract state.
+  * @dev FIXME: When using in production, use params to set initial state.
   */
   function OdysseyPresale() public {
+    /* FIXME: eventually token will be set to an existing contract instance. */
     token = new OdysseyToken();
     owner = msg.sender;
     wallet = msg.sender;
     isPurchaseEnabled = true;
-    rate = 60;
+    rate = 2;
+    cap = 30000000;
+  }
+
+  /*
+  * @dev fallback function can be used to buy tokens.
+  */
+  function () external payable {
+    buyTokens(msg.sender);
+  }
+
+  /*
+  * @dev Low level token purchase function.
+  * @param beneficiary The address to send the purchased tokens.
+  */
+  function buyTokens(address beneficiary) public payable {
+    require(beneficiary != address(0));
+    require(validPurchase());
+
+    uint256 weiAmount = msg.value;
+
+    // calculate token amount to be created
+    uint256 tokens = weiAmount.mul(rate);
+
+    // update state
+    weiRaised = weiRaised.add(weiAmount);
+
+    token.mint(beneficiary, tokens);
+    TokenPurchase(msg.sender, beneficiary, weiAmount, tokens);
+
+    forwardFunds();
+  }
+
+  /*
+  * @dev Send ether to the fund collection wallet.
+  */
+  function forwardFunds() internal {
+    wallet.transfer(msg.value);
+  }
+
+  /*
+  * @dev Similar to validPurchase() function in OpenZepellin Crowdsale.sol.
+  * @dev Includes check for isPurchaseEnabled.
+  * @returns true if the transaction can buy tokens
+  */
+  function validPurchase() internal view returns (bool) {
+    bool nonZeroPurchase = msg.value != 0;
+    bool capReached = hasEnded();
+    return isPurchaseEnabled && nonZeroPurchase && !capReached;
+  }
+
+  /*
+  * @dev Similar to hasEnded() function in OpenZepellin CappedCrowdsale.sol.
+  * @returns true if the cap has not been reached.
+  */
+  function hasEnded() public view returns (bool) {
+    bool capReached = weiRaised >= cap;
+    return capReached;
   }
 
   /**
   * @dev Change the conversion rate at which tokens may be purchased.
-  * @param _rate Conversion rate of ether to tokens.
+  * @param _rate Conversion rate of wei to tokens.
   */
   function setRate(uint256 _rate) public onlyOwner returns (bool) {
     rate = _rate;
@@ -46,36 +109,7 @@ contract OdysseyPresale is Ownable {
   }
 
   /**
-  * @dev Purchase tokens at a set rate.
-  * @dev Internally calls OdysseyToken.sol transfer() function.
-  * @param _to address The address to which to transfer the tokens.
-  https://ethereum.stackexchange.com/questions/8222/access-struct-object-of-one-contract-from-another#8223
-  */
-  function purchase(address _to) public payable returns (bool) {
-    require(msg.value != 0);
-    require(isPurchaseEnabled); // Allows token purchases to be disabled.
-
-    // 1 ether = 10^18 wei. Convert msg.value to ether and multiply by rate.
-    uint256 numberOfTokens = (msg.value / 1000000000000000000) * rate;
-    forwardFunds(); // Get the ether first. Then transfer the tokens.
-    token.transfer(_to, numberOfTokens);
-
-    // Trigger purchase event.
-    Purchase(msg.sender, _to, numberOfTokens);
-    return true;
-  }
-
-  /*
-  * @dev Send ether to the fund collection wallet.
-  * @dev Override to create custom fund forwarding mechanisms.
-  */
-  function forwardFunds() internal {
-    wallet.transfer(msg.value);
-  }
-
-  /**
-  * @dev Destroy the contract and drain any ether to withdrawalOwner.
-  * @dev FIXME: This might be best left out in production.
+  * @dev Destroy the contract and drain any remaining ether.
   */
   function selfDestruct() public onlyOwner {
     selfdestruct(wallet);
