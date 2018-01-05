@@ -19,7 +19,7 @@ contract OdysseyPresale is Ownable {
   * @dev Constructor.
   * @dev Set initial contract state.
   */
-  function OdysseyPresaleToken() public {
+  function OdysseyPresale() public {
     token = new OdysseyToken();
     owner = msg.sender;
     wallet = msg.sender;

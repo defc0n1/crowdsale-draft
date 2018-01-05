@@ -55,8 +55,8 @@ contract OdysseyToken is MintableToken {
 
 	/**
   * @dev Transfer tokens to a specified address.
-	* @dev This is used instead of the normal transfer() function
-	* @dev as it adds a check for isTransferEnabled.
+	* @dev Overrides the normal transfer() function
+	* @dev to add a check for isTransferEnabled.
   * @param _to The address to transfer to.
   * @param _value The amount to be transferred.
   */
