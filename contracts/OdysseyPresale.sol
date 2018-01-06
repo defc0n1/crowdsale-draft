@@ -35,7 +35,7 @@ contract OdysseyPresale is Ownable {
   }
 
   /*
-  * @dev fallback function can be used to buy tokens.
+  * @dev Fallback function can be used to buy tokens.
   */
   function () external payable {
     buyTokens(msg.sender);
@@ -43,23 +43,20 @@ contract OdysseyPresale is Ownable {
 
   /*
   * @dev Low level token purchase function.
-  * @param beneficiary The address to send the purchased tokens.
+  * @param beneficiary The address with which to send purchased tokens.
   */
   function buyTokens(address beneficiary) public payable {
     require(beneficiary != address(0));
     require(validPurchase());
 
     uint256 weiAmount = msg.value;
-
-    // calculate token amount to be created
+    // Calculate token amount to be created
     uint256 tokens = weiAmount.mul(rate);
-
-    // update state
+    // Increment total amount of wei raised.
     weiRaised = weiRaised.add(weiAmount);
 
     token.mint(beneficiary, tokens);
-    TokenPurchase(msg.sender, beneficiary, weiAmount, tokens);
-
+    Purchase(msg.sender, beneficiary, weiAmount, tokens);
     forwardFunds();
   }
 
@@ -73,7 +70,7 @@ contract OdysseyPresale is Ownable {
   /*
   * @dev Similar to validPurchase() function in OpenZepellin Crowdsale.sol.
   * @dev Includes check for isPurchaseEnabled.
-  * @returns true if the transaction can buy tokens
+  * @returns true if the transaction can buy tokens.
   */
   function validPurchase() internal view returns (bool) {
     bool nonZeroPurchase = msg.value != 0;
@@ -82,6 +79,7 @@ contract OdysseyPresale is Ownable {
   }
 
   /*
+  * @dev Determines if the crowdsale has ended.
   * @dev Similar to hasEnded() function in OpenZepellin CappedCrowdsale.sol.
   * @returns true if the cap has not been reached.
   */
