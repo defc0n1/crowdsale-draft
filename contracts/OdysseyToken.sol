@@ -5,7 +5,7 @@ import 'zeppelin-solidity/contracts/token/MintableToken.sol';
 contract OdysseyToken is MintableToken {
 
 	// Properties. ---------------------------
-	string public name = 'OdysseyPresaleToken';
+	string public name = 'OdysseyToken';
 	string public symbol = 'ODT';
 	uint public decimals = 18;
 	uint public initialSupply = 12000000;
