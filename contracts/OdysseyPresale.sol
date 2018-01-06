@@ -17,7 +17,7 @@ contract OdysseyPresale is Ownable {
   uint256 public weiRaised; // Amount of raised money in wei.
 
   // Events.
-  event Purchase(address indexed from, address indexed to, uint256 value);
+  event Purchase(address indexed from, address indexed to, uint256 value, uint256 tokens);
 
   /**
   * @dev Constructor.
