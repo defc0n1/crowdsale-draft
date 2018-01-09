@@ -1,8 +1,10 @@
 pragma solidity ^0.4.18;
 
 import 'zeppelin-solidity/contracts/token/MintableToken.sol';
+import 'zeppelin-solidity/contracts/token/BurnableToken.sol';
+import './MultipleOwners.sol';
 
-contract OdysseyToken is MintableToken {
+contract OdysseyToken is MintableToken, BurnableToken, MultipleOwners {
 
 	// Properties. ---------------------------
 	string public name = 'OdysseyToken';
@@ -13,34 +15,26 @@ contract OdysseyToken is MintableToken {
 
 	/**
   * @dev Constructor.
-	* @dev FIXME: When using in production, use params to set initial state.
   * @dev Set initial token supply and balances.
   */
-	function OdysseyToken() public {
+	function OdysseyToken(
+		string _name,
+		string _symbol,
+		uint _decimals,
+		uint _initialSupply,
+		bool _isTransferEnabled
+	)
+	public {
+		// Set initial state from params.
+		name = _name;
+		symbol = _symbol;
+		decimals = _decimals;
+		initialSupply = _initialSupply;
+		isTransferEnabled = _isTransferEnabled;
+		// Set total supply and initial balance.
 		totalSupply = initialSupply;
 		balances[msg.sender] = initialSupply;
-		isTransferEnabled = true;
 	}
-
-	// From BurnableToken.sol. ---------------------------
-
-	event Burn(address indexed burner, uint256 value);
-
-  /**
-   * @dev Burns a specific amount of tokens.
-   * @param _value The amount of token to be burned.
-   */
-  function burn(uint256 _value) public {
-      require(_value > 0);
-      require(_value <= balances[msg.sender]);
-      // no need to require value <= totalSupply, since that would imply the
-      // sender's balance is greater than the totalSupply, which *should* be an assertion failure
-
-      address burner = msg.sender;
-      balances[burner] = balances[burner].sub(_value);
-      totalSupply = totalSupply.sub(_value);
-      Burn(burner, _value);
-  }
 
 	// Override transfer(). ---------------------------
 

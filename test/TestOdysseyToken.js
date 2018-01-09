@@ -1,4 +1,4 @@
-const OdysseyToken = artifacts.require('OdysseyToken');
+const OdysseyTokenMock = artifacts.require('OdysseyToken');
 const BigNumber = web3.BigNumber;
 
 /*
@@ -7,7 +7,7 @@ const BigNumber = web3.BigNumber;
 * @dev These might not be too useful, but they do provide a sanity check.
 * @dev If tests are failing, it's likely that the initial properties changed.
 */
-contract('OdysseyToken', function(accounts) {
+contract('OdysseyTokenMock', function(accounts) {
 
   /*
   * @dev Test initial constants/constructor.
@@ -27,8 +27,8 @@ contract('OdysseyToken', function(accounts) {
     // Custom (non-ERC20) properties.
     const IS_TRANSFER_ENABLED = true;
 
-    before('deploy new OdysseyToken', async () => {
-        contract = await OdysseyToken.deployed();
+    before('deploy new OdysseyTokenMock', async () => {
+        contract = await OdysseyTokenMock.deployed();
     });
 
     it('should ensure name is correct', async function(){
@@ -69,8 +69,8 @@ contract('OdysseyToken', function(accounts) {
   describe('Common Functionality', function() {
     let contract;
 
-    before('deploy new OdysseyToken', async () => {
-        contract = await OdysseyToken.deployed();
+    before('deploy new OdysseyTokenMock', async () => {
+        contract = await OdysseyTokenMock.deployed();
     });
 
     it('should put 12,000,000 tokens in the first account', async function() {
@@ -200,9 +200,9 @@ contract('OdysseyToken', function(accounts) {
 
   describe('Dangerous Functionality', function() {
     let contract;
-    
-    before('deploy new OdysseyToken', async () => {
-        contract = await OdysseyToken.deployed();
+
+    before('deploy new OdysseyTokenMock', async () => {
+        contract = await OdysseyTokenMock.deployed();
     });
 
     it('should change contract owner', async function (){

@@ -8,13 +8,13 @@ contract OdysseyPresale is Ownable {
 
   using SafeMath for uint256;
   // Properties. ---------------------------
-  OdysseyToken public token; // The token being sold.
   address public owner; // Owner of the contract.
   address public wallet; // Address to which funds can be withdrawn.
   bool public isPurchaseEnabled; // Token purchases enabled/disabled.
   uint256 public cap; // Fixed cap for this round of the sale.
   uint256 public rate; // How many token units a buyer gets per wei.
   uint256 public weiRaised; // Amount of raised money in wei.
+  OdysseyToken public token; // The token being sold.
 
   // Events.
   event Purchase(address indexed from, address indexed to, uint256 value, uint256 tokens);
@@ -22,16 +22,28 @@ contract OdysseyPresale is Ownable {
   /**
   * @dev Constructor.
   * @dev Set initial contract state.
-  * @dev FIXME: When using in production, use params to set initial state.
   */
-  function OdysseyPresale() public {
-    /* FIXME: eventually token will be set to an existing contract instance. */
-    token = new OdysseyToken();
+  function OdysseyPresale(
+    address _wallet,
+    bool _isPurchaseEnabled,
+    uint _rate,
+    uint _cap
+  )
+  public {
+    wallet = _wallet;
+    isPurchaseEnabled = _isPurchaseEnabled;
+    rate = _rate;
+    cap = _cap;
     owner = msg.sender;
-    wallet = msg.sender;
-    isPurchaseEnabled = true;
-    rate = 2;
-    cap = 30000000;
+  }
+
+  /*
+  * creates the token to be sold.
+  * Overrides OpenZepellin function to use
+  */
+  function assignTokenContract(address tokenContract) public onlyOwner {
+    require(token == address(0));
+    token = OdysseyToken(tokenContract);
   }
 
   /*
