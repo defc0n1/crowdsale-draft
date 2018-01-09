@@ -199,6 +199,8 @@ contract('OdysseyToken', function(accounts) {
   });
 
   describe('Dangerous Functionality', function() {
+    let contract;
+    
     before('deploy new OdysseyToken', async () => {
         contract = await OdysseyToken.deployed();
     });
